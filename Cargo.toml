@@ -1,8 +1,18 @@
 [package]
-name = "doge-wallet-rs"
+name = "doge-wallet"
 version = "0.1.0"
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["Tobin Harding <me@tobin.cc>"]
+license = "MIT"
+homepage = "https://github.com/tcharding/doge-wallet-rs/"
+repository = "https://github.com/tcharding/doge-wallet-rs/"
+description = "Command line Dogecoin wallet"
+keywords = [ "crypto", "dogecoin" ]
+readme = "README.md"
 
 [dependencies]
+anyhow = "1.0"
+dogecoin = { path = "../rust-dogecoin"}
+env_logger = "0.8"
+log = { version = "0.4", features = ["std"] }
+structopt = "0.3"
