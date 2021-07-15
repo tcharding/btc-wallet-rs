@@ -1,7 +1,7 @@
 use anyhow::Result;
 use structopt::StructOpt;
 
-use doge_wallet::{balance, new_address, send};
+use doge_wallet::{cmd, dogecoind_rpc_wallet};
 
 #[allow(unused_imports)]
 use log::{debug, error, info, trace, warn};
@@ -16,10 +16,17 @@ fn main() -> Result<()> {
         warn!("passphrase is currently unimplemented");
     }
 
+    info!("Creating wallet");
+    let wallet = dogecoind_rpc_wallet()?;
+    //    wallet.sync(NoopProgress, None)?;
+
     match opt.cmd {
-        Cmd::Balance => balance()?,
-        Cmd::NewAddress => new_address()?,
-        Cmd::Send { amount, address } => send(amount, address)?,
+        Cmd::Balance => {
+            let b = wallet.get_balance()?;
+            println!("Balance: {}", b);
+        }
+        Cmd::NewAddress => cmd::new_address()?,
+        Cmd::Send { amount, address } => cmd::send(amount, address)?,
     }
 
     Ok(())
