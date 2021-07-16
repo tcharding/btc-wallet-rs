@@ -16,11 +16,11 @@
 use std::path::PathBuf;
 
 use anyhow::Result;
-use doge_bdk::blockchain::{ConfigurableBlockchain, RpcBlockchain, RpcConfig};
-use doge_bdk::database::MemoryDatabase;
-use doge_bdk::Wallet;
-use dogecoin::Network;
-use dogecoincore_rpc::Auth;
+use bdk::blockchain::{ConfigurableBlockchain, RpcBlockchain, RpcConfig};
+use bdk::database::MemoryDatabase;
+use bdk::Wallet;
+use bitcoin::Network;
+use bitcoincore_rpc::Auth;
 
 pub mod cmd;
 

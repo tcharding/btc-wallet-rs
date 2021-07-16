@@ -12,10 +12,9 @@ readme = "README.md"
 
 [dependencies]
 anyhow = "1.0"
-dogecoincore-rpc = { version = "0.13", git = "http://github.com/tcharding/rust-dogecoincore-rpc" }
-dogecoin = { version = "0.26", git = "http://github.com/tcharding/rust-dogecoin"}
-# doge-bdk = { version = "0.9.1-dev", features = [ "rpc" ], default-features = false, git = "http://github.com/tcharding/doge-bdk" }
-doge-bdk = { version = "0.9.1-dev", features = [ "rpc" ], default-features = false, path = "../doge-bdk"}
+bitcoincore-rpc = { version = "0.13", git = "http://github.com/tcharding/rust-bitcoincore-rpc", branch = "dogecoin"  }
+bitcoin = { version = "0.26", git = "http://github.com/tcharding/rust-bitcoin", branch = "dogecoin" }
+bdk = { version = "0.9.1-dev", features = [ "rpc" ], default-features = false, git = "http://github.com/tcharding/bdk", branch = "dogecoin" }
 env_logger = "0.8"
 log = { version = "0.4", features = ["std"] }
 structopt = "0.3"
