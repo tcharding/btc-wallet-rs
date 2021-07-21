@@ -13,47 +13,43 @@
 )]
 #![allow(clippy::nonstandard_macro_braces)]
 
-use std::path::PathBuf;
-
 use anyhow::Result;
-use bdk::blockchain::{ConfigurableBlockchain, RpcBlockchain, RpcConfig};
+use bdk::blockchain::ElectrumBlockchain;
 use bdk::database::MemoryDatabase;
+use bdk::electrum_client::Client;
 use bdk::Wallet;
 use bitcoin::Network;
-use bitcoincore_rpc::Auth;
 
 pub mod cmd;
 
-const DOGE_ELECTRS_URL: &str = "http://127.0.0.1:51001";
-// const RPC_USER: &str = "tobin";
-// const RPC_PASS: &str = "Jw0jFIMHly_lCMde2Mq28_ZIyQlVdslv-ScmonTRPyc=";
+/// Dogecoin is divisible to 
+pub const KOINU_IN_ONE_DOGECOIN: u64 = 100_000_000; // FIXME: Is this correct?
 
-// Descriptors created using `bdk-cli`, see `~/docs/bdk/testnet.md`.
-const DESC: &str = "wpkh(tprv8ZgxMBicQKsPdT8dRdm7Ae7ZxLTCKNPaZwt7aBWNRyxUCMvY7xhjRG4iBLerk2FTBv6zrzMMw18M3LwJEvn9QhbzsiYJefwUmzcUXcAPDmt/0/*)";
-const CHANGE_DESC: &str = "wpkh(tprv8ZgxMBicQKsPdT8dRdm7Ae7ZxLTCKNPaZwt7aBWNRyxUCMvY7xhjRG4iBLerk2FTBv6zrzMMw18M3LwJEvn9QhbzsiYJefwUmzcUXcAPDmt/1/*)";
+const ELECTRUMX_URL: &str = "tcp://127.0.0.1:50001";
 
-// This does not work because dogecoind does not implement `listwallets`.
-// Therefore to use the `RpcBlockchain` we would have to backport that feature
-// to dogecoincore - that means C++ hacking.
-pub fn dogecoind_rpc_wallet() -> Result<Wallet<RpcBlockchain, MemoryDatabase>> {
-    // let auth = Auth::UserPass(RPC_USER.to_string(), RPC_PASS.to_string());
-    let auth = Auth::CookieFile(PathBuf::from("/home/tobin/.dogecoin/testnet3/.cookie"));
+type DogeWallet = Wallet<ElectrumBlockchain, MemoryDatabase>;
 
-    let config = RpcConfig {
-        url: DOGE_ELECTRS_URL.to_string(),
-        auth,
-        network: Network::Testnet,
-        wallet_name: "doge_1".to_string(),
-        skip_blocks: None,
-    };
+// Taken from dogecoind wallet dump (dcli dumpwallet ~/tmp/wallet)
+const DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/0'/0'/*)";
+const CHANGE_DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/1/*)";
 
+pub fn electrumx_wallet() -> Result<DogeWallet> {
+    let client = Client::new(ELECTRUMX_URL)?;
+    let blockchain = ElectrumBlockchain::from(client);
     let wallet = Wallet::new(
         DESC,
         Some(CHANGE_DESC),
         Network::Testnet,
         MemoryDatabase::default(),
-        RpcBlockchain::from_config(&config)?,
+        blockchain,
     )?;
 
     Ok(wallet)
+}
+
+#[allow(clippy::cast_precision_loss)]
+/// Get a string representing doge amount i.e., limit to 8 decimal places.
+pub fn display_doge(x: u64) -> String {
+    let d = x as f32 / 100000000.0;
+    format!("{:.8}", d)
 }
