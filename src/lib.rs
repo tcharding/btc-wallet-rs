@@ -13,9 +13,14 @@
 )]
 #![allow(clippy::nonstandard_macro_braces)]
 
+use std::path::PathBuf;
+
+#[allow(unused_imports)]
+use log::{debug, error, info, trace, warn};
+
 use anyhow::Result;
 use bdk::blockchain::ElectrumBlockchain;
-use bdk::database::MemoryDatabase;
+use bdk::database::AnyDatabase;
 use bdk::electrum_client::Client;
 use bdk::Wallet;
 use bitcoin::Network;
@@ -27,20 +32,25 @@ pub const KOINU_IN_ONE_DOGECOIN: u64 = 100_000_000; // FIXME: Is this correct?
 
 const ELECTRUMX_URL: &str = "tcp://127.0.0.1:50001";
 
-type DogeWallet = Wallet<ElectrumBlockchain, MemoryDatabase>;
+type DogeWallet = Wallet<ElectrumBlockchain, AnyDatabase>;
 
 // Taken from dogecoind wallet dump (dcli dumpwallet ~/tmp/wallet)
 const DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/0'/0'/*)";
 const CHANGE_DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/1/*)";
 
-pub fn electrumx_wallet() -> Result<DogeWallet> {
+pub fn electrumx_wallet(db_path: PathBuf) -> Result<DogeWallet> {
+    info!("Creating wallet");
+    debug!("Using database at: {}", db_path.display());
+    let db = sled::open(db_path)?;
+    let tree = db.open_tree(b"electrumx wallet")?;
+
     let client = Client::new(ELECTRUMX_URL)?;
     let blockchain = ElectrumBlockchain::from(client);
     let wallet = Wallet::new(
         DESC,
         Some(CHANGE_DESC),
         Network::Testnet,
-        MemoryDatabase::default(),
+        AnyDatabase::from(tree),
         blockchain,
     )?;
 

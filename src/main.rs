@@ -1,13 +1,15 @@
+use std::path::PathBuf;
+use std::env;
 use std::process;
+
+#[allow(unused_imports)]
+use log::{debug, error, info, trace, warn};
 
 use anyhow::Result;
 use bdk::blockchain;
 use structopt::StructOpt;
 
 use doge_wallet::{cmd, electrumx_wallet};
-
-#[allow(unused_imports)]
-use log::{debug, error, info, trace, warn};
 
 fn main() -> Result<()> {
     let opt = Opt::from_args();
@@ -25,8 +27,8 @@ fn main() -> Result<()> {
         process::exit(0);
     }
 
-    info!("Creating wallet");
-    let wallet = electrumx_wallet()?;
+    let db = database_path()?;
+    let wallet = crate::electrumx_wallet(db)?;
     wallet.sync(blockchain::log_progress(), None)?;
 
     match opt.cmd {
@@ -40,6 +42,16 @@ fn main() -> Result<()> {
     }
 
     Ok(())
+}
+
+fn database_path() -> Result<PathBuf> {
+    let mut db = PathBuf::new();
+    db.push(env::var("HOME")?);
+    db.push(".cache");
+    db.push("doge-wallet-rs");
+    db.push("db");
+
+    Ok(db)
 }
 
 #[derive(Debug, StructOpt, Clone)]

@@ -14,10 +14,11 @@ readme = "README.md"
 anyhow = "1.0"
 bitcoincore-rpc = { version = "0.13", git = "http://github.com/tcharding/rust-bitcoincore-rpc", branch = "dogecoin"  }
 bitcoin = { version = "0.26", git = "http://github.com/tcharding/rust-bitcoin", branch = "dogecoin" }
-bdk = { version = "0.9.1-dev", features = [ "electrum" ], default-features = false, git = "http://github.com/tcharding/bdk", branch = "dogecoin" }
+bdk = { version = "0.9.1-dev", features = [ "electrum", "key-value-db" ], default-features = false, git = "http://github.com/tcharding/bdk", branch = "dogecoin" }
 electrum-client = { version = "0.7" }
 env_logger = "0.8"
 log = { version = "0.4", features = ["std"] }
 secp256k1 = "0.20"
 serde_json = "1.0"
+sled = "0.34"
 structopt = "0.3"
