@@ -60,14 +60,24 @@ fn default_testnet_abs_fee() -> u64 {
     KOINU_IN_ONE_DOGECOIN
 }
 
-/// Debug the wallet.
-pub fn debug(wallet: &DogeWallet) -> Result<()> {
-    // Print unspent UTXOs.
-    println!("Listing all transactions");
-    for details in wallet.list_transactions(false)? {
+/// List transactions to/from this wallet.
+pub fn list_transactions(wallet: &DogeWallet, include_raw: bool) -> Result<()> {
+    for details in wallet.list_transactions(include_raw)? {
         println!("{}", serde_json::to_string_pretty(&details).unwrap());
     }
+    Ok(())
+}
 
+/// List unspent transactions.
+pub fn list_unspent(wallet: &DogeWallet) -> Result<()> {
+    for utxo in wallet.list_unspent()? {
+        println!("{}", serde_json::to_string_pretty(&utxo).unwrap());
+    }
+    Ok(())
+}
+
+/// Debug the wallet.
+pub fn debug(_wallet: &DogeWallet) -> Result<()> {
     // TODO: Print all used addresses.
     Ok(())
 }

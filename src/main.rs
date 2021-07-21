@@ -34,6 +34,8 @@ fn main() -> Result<()> {
         Cmd::Address => cmd::address(&wallet)?,
         Cmd::Validate { .. } => unreachable!("we checked this already above"),
         Cmd::Send { amount, address } => cmd::send(&wallet, amount, &address)?,
+        Cmd::ListTransactions { include_raw } => cmd::list_transactions(&wallet, include_raw)?,
+        Cmd::ListUnspent => cmd::list_unspent(&wallet)?,
         Cmd::Debug => cmd::debug(&wallet)?,
     }
 
@@ -62,6 +64,14 @@ pub enum Cmd {
     Send { amount: u64, address: String },
     /// Validate address.
     Validate { address: String },
+    /// List transactions to/from this wallet.
+    ListTransactions {
+        /// Include raw transaction data.
+        #[structopt(long)]
+        include_raw: bool,
+    },
+    /// List unspent transactions.
+    ListUnspent,
     /// Debug the wallet.
     Debug,
 }
