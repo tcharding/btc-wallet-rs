@@ -1,18 +1,18 @@
-# Dogecoin Wallet in Rust
+# Bitcoin Wallet in Rust
 
-Command line dogecoin wallet written in Rust.
+Simple command line Bitcoin wallet written in Rust using [bdk](https://github.com/bitcoindevkit/bdk).
 
 Only ever used on testnet, use at your own risk.
 
 ## Usage
 
 ```
-$ doge-wallet --help
-doge-wallet 0.1.0
-Simple Dogecoin wallet
+$ btc-wallet --help
+btc-wallet 0.1.0
+Simple Bitcoin wallet
 
 USAGE:
-    doge-wallet [OPTIONS] <SUBCOMMAND>
+    btc-wallet [OPTIONS] <SUBCOMMAND>
 
 FLAGS:
     -h, --help       Prints help information
@@ -28,7 +28,7 @@ SUBCOMMANDS:
     help                 Prints this message or the help of the given subcommand(s)
     list-transactions    List transactions to/from this wallet
     list-unspent         List unspent transactions
-    send                 Send Dogecoin to `address`. `amount` is in dogecoin (not koinus)
+    send                 Send Bitcoin to `address`. `amount` is in satoshis. 
     validate             Validate address
 
 ```

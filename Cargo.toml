@@ -1,13 +1,13 @@
 [package]
-name = "doge-wallet"
+name = "btc-wallet"
 version = "0.1.0"
 edition = "2018"
 authors = ["Tobin Harding <me@tobin.cc>"]
 license = "MIT"
-homepage = "https://github.com/tcharding/doge-wallet-rs/"
-repository = "https://github.com/tcharding/doge-wallet-rs/"
-description = "Command line Dogecoin wallet"
-keywords = [ "crypto", "dogecoin" ]
+homepage = "https://github.com/tcharding/btc-wallet-rs/"
+repository = "https://github.com/tcharding/btc-wallet-rs/"
+description = "Simple command line Bitcoin wallet"
+keywords = [ "crypto", "bitcoin" ]
 readme = "README.md"
 
 [dependencies]

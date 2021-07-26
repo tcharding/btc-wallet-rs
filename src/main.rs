@@ -1,5 +1,5 @@
-use std::path::PathBuf;
 use std::env;
+use std::path::PathBuf;
 use std::process;
 
 #[allow(unused_imports)]
@@ -9,7 +9,7 @@ use anyhow::Result;
 use bdk::blockchain;
 use structopt::StructOpt;
 
-use doge_wallet::{cmd, electrumx_wallet};
+use btc_wallet::{cmd, electrumx_wallet};
 
 fn main() -> Result<()> {
     let opt = Opt::from_args();
@@ -23,7 +23,7 @@ fn main() -> Result<()> {
 
     if let Cmd::Validate { address } = opt.cmd {
         cmd::validate_address(&address)?;
-        println!("Address is a valid standard Dogecoin address");
+        println!("Address is a valid standard Bitcoin address");
         process::exit(0);
     }
 
@@ -48,14 +48,14 @@ fn database_path() -> Result<PathBuf> {
     let mut db = PathBuf::new();
     db.push(env::var("HOME")?);
     db.push(".cache");
-    db.push("doge-wallet-rs");
+    db.push("btc-wallet-rs");
     db.push("db");
 
     Ok(db)
 }
 
 #[derive(Debug, StructOpt, Clone)]
-#[structopt(about = "Dogecoin wallet")]
+#[structopt(about = "Btccoin wallet")]
 pub struct Opt {
     /// Wallet passphrase
     #[structopt(short, long)]
@@ -66,13 +66,13 @@ pub struct Opt {
 }
 
 #[derive(Debug, StructOpt, Clone)]
-#[structopt(about = "Simple Dogecoin wallet")]
+#[structopt(about = "Simple Btccoin wallet")]
 pub enum Cmd {
     /// Print the current balance.
     Balance,
     /// Generate and print the last unused address.
     Address,
-    /// Send Dogecoin to `address`. `amount` is in dogecoin (not koinus).
+    /// Send Btccoin to `address`. `amount` is in satsoshis.
     Send { amount: u64, address: String },
     /// Validate address.
     Validate { address: String },

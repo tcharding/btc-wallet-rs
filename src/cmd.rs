@@ -5,34 +5,33 @@ use bdk::wallet::AddressIndex;
 use bdk::SignOptions;
 use bitcoin::Address;
 
-use crate::{KOINU_IN_ONE_DOGECOIN, DogeWallet};
+use crate::{BtcWallet, SATS_IN_ONE_BITCOIN};
 
 #[allow(unused_imports)]
 use log::{debug, error, info, trace, warn};
 
 /// Print the current balance.
-pub fn balance(wallet: &DogeWallet) -> Result<()> {
+pub fn balance(wallet: &BtcWallet) -> Result<()> {
     let b = wallet.get_balance()?;
-    println!("Balance: {}", crate::display_doge(b));
+    println!("Balance: {}", crate::display_btc(b));
     Ok(())
 }
 
 /// Generate and print the last unused address.
-pub fn address(wallet: &DogeWallet) -> Result<()> {
+pub fn address(wallet: &BtcWallet) -> Result<()> {
     let info = wallet.get_address(AddressIndex::LastUnused)?;
     println!("Address: {}", *info);
     Ok(())
 }
 
 /// Send `amount` to `address`.
-pub fn send(wallet: &DogeWallet, dogecoin: u64, address: &str) -> Result<()> {
-    let koinus = dogecoin * KOINU_IN_ONE_DOGECOIN;
+pub fn send(wallet: &BtcWallet, amount: u64, address: &str) -> Result<()> {
     let to = Address::from_str(address)?;
 
     let (mut psbt, details) = {
         let mut builder = wallet.build_tx();
         builder
-            .add_recipient(to.script_pubkey(), koinus)
+            .add_recipient(to.script_pubkey(), amount)
             .enable_rbf()
             .fee_absolute(default_testnet_abs_fee());
         builder.finish()?
@@ -47,7 +46,7 @@ pub fn send(wallet: &DogeWallet, dogecoin: u64, address: &str) -> Result<()> {
     Ok(())
 }
 
-/// Validate `address` is a valid standard Dogecoin address.
+/// Validate `address` is a valid standard Bitcoin address.
 pub fn validate_address(address: &str) -> Result<()> {
     let addr = Address::from_str(address)?;
     if !addr.is_standard() {
@@ -57,11 +56,11 @@ pub fn validate_address(address: &str) -> Result<()> {
 }
 
 fn default_testnet_abs_fee() -> u64 {
-    KOINU_IN_ONE_DOGECOIN
+    SATS_IN_ONE_BITCOIN
 }
 
 /// List transactions to/from this wallet.
-pub fn list_transactions(wallet: &DogeWallet, include_raw: bool) -> Result<()> {
+pub fn list_transactions(wallet: &BtcWallet, include_raw: bool) -> Result<()> {
     for details in wallet.list_transactions(include_raw)? {
         println!("{}", serde_json::to_string_pretty(&details).unwrap());
     }
@@ -69,7 +68,7 @@ pub fn list_transactions(wallet: &DogeWallet, include_raw: bool) -> Result<()> {
 }
 
 /// List unspent transactions.
-pub fn list_unspent(wallet: &DogeWallet) -> Result<()> {
+pub fn list_unspent(wallet: &BtcWallet) -> Result<()> {
     for utxo in wallet.list_unspent()? {
         println!("{}", serde_json::to_string_pretty(&utxo).unwrap());
     }
@@ -77,7 +76,7 @@ pub fn list_unspent(wallet: &DogeWallet) -> Result<()> {
 }
 
 /// Debug the wallet.
-pub fn debug(_wallet: &DogeWallet) -> Result<()> {
+pub fn debug(_wallet: &BtcWallet) -> Result<()> {
     // TODO: Print all used addresses.
     Ok(())
 }

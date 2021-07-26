@@ -1,4 +1,4 @@
-# .gitignore for doge-wallet-rs
+# .gitignore for btc-wallet-rs
 
 Cargo.lock
 

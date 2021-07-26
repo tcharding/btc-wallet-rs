@@ -27,18 +27,17 @@ use bitcoin::Network;
 
 pub mod cmd;
 
-/// Dogecoin is divisible to 
-pub const KOINU_IN_ONE_DOGECOIN: u64 = 100_000_000; // FIXME: Is this correct?
+/// Minimum divisible unit for bitcoin (satoshis).
+pub const SATS_IN_ONE_BITCOIN: u64 = 100_000_000;
 
-const ELECTRUMX_URL: &str = "tcp://127.0.0.1:50001";
+const ELECTRUMX_URL: &str = "tcp://blockstream.info:143";
 
-type DogeWallet = Wallet<ElectrumBlockchain, AnyDatabase>;
+type BtcWallet = Wallet<ElectrumBlockchain, AnyDatabase>;
 
-// Taken from dogecoind wallet dump (dcli dumpwallet ~/tmp/wallet)
 const DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/0'/0'/*)";
 const CHANGE_DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/1/*)";
 
-pub fn electrumx_wallet(db_path: PathBuf) -> Result<DogeWallet> {
+pub fn electrumx_wallet(db_path: PathBuf) -> Result<BtcWallet> {
     info!("Creating wallet");
     debug!("Using database at: {}", db_path.display());
     let db = sled::open(db_path)?;
@@ -58,8 +57,8 @@ pub fn electrumx_wallet(db_path: PathBuf) -> Result<DogeWallet> {
 }
 
 #[allow(clippy::cast_precision_loss)]
-/// Get a string representing doge amount i.e., limit to 8 decimal places.
-pub fn display_doge(x: u64) -> String {
+/// Get a string representing btc amount i.e., limit to 8 decimal places.
+pub fn display_btc(x: u64) -> String {
     let d = x as f32 / 100000000.0;
     format!("{:.8}", d)
 }
