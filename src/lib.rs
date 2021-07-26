@@ -27,7 +27,7 @@ use bitcoin::Network;
 
 pub mod cmd;
 
-/// Dogecoin is divisible to 
+/// Dogecoin is divisible to
 pub const KOINU_IN_ONE_DOGECOIN: u64 = 100_000_000; // FIXME: Is this correct?
 
 const ELECTRUMX_URL: &str = "tcp://127.0.0.1:50001";
@@ -35,8 +35,11 @@ const ELECTRUMX_URL: &str = "tcp://127.0.0.1:50001";
 type DogeWallet = Wallet<ElectrumBlockchain, AnyDatabase>;
 
 // Taken from dogecoind wallet dump (dcli dumpwallet ~/tmp/wallet)
-const DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/0'/0'/*)";
+//const DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/0'/0'/*)";
 const CHANGE_DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/1/*)";
+
+const DESC: &str =
+    "pkh(02f263a2c4a9e96e39a01eefdfc3c5bdcf9a4e7ad3f041842e73208e261b9c8a6b)#lsdwrh5u";
 
 pub fn electrumx_wallet(db_path: PathBuf) -> Result<DogeWallet> {
     info!("Creating wallet");
