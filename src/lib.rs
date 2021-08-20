@@ -34,6 +34,7 @@ const ELECTRUMX_URL: &str = "tcp://blockstream.info:143";
 
 type BtcWallet = Wallet<ElectrumBlockchain, AnyDatabase>;
 
+// This private key has testnet funds on it. Send them back to faucet before changing: mkHS9ne12qx9pS9VojpwU5xtRd4T7X7ZUt
 const DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/0'/0'/*)";
 const CHANGE_DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/1/*)";
 

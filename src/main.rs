@@ -28,6 +28,7 @@ fn main() -> Result<()> {
     }
 
     let db = database_path()?;
+
     let wallet = crate::electrumx_wallet(db)?;
     wallet.sync(blockchain::log_progress(), None)?;
 
@@ -44,6 +45,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
+// Get the database path.
 fn database_path() -> Result<PathBuf> {
     let mut db = PathBuf::new();
     db.push(env::var("HOME")?);
