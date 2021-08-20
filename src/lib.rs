@@ -30,6 +30,9 @@ pub mod cmd;
 /// Minimum divisible unit for bitcoin (satoshis).
 pub const SATS_IN_ONE_BITCOIN: u64 = 100_000_000;
 
+/// Blockstreams Esplora instance, this is a forked version of Electrs that has
+/// had a JSON RPC API bolted on and a bunch of performance enhancements. It
+/// still exposes the ElectrumX REST API.
 const ELECTRUMX_URL: &str = "tcp://blockstream.info:143";
 
 type BtcWallet = Wallet<ElectrumBlockchain, AnyDatabase>;
