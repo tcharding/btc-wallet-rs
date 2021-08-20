@@ -7,14 +7,14 @@ license = "MIT"
 homepage = "https://github.com/tcharding/btc-wallet-rs/"
 repository = "https://github.com/tcharding/btc-wallet-rs/"
 description = "Simple command line Bitcoin wallet"
-keywords = [ "crypto", "bitcoin" ]
+keywords = [ "bitcoin", "wallet" ]
 readme = "README.md"
 
 [dependencies]
 anyhow = "1.0"
-bitcoincore-rpc = "0.13"
-bitcoin = "0.26"
 bdk = { version = "0.9", features = [ "electrum", "key-value-db" ], default-features = false }
+bitcoin = "0.26"
+bitcoincore-rpc = "0.13"
 electrum-client = "0.7"
 env_logger = "0.8"
 log = { version = "0.4", features = ["std"] }
