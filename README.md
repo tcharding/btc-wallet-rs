@@ -4,6 +4,8 @@ Simple command line Bitcoin wallet written in Rust using [bdk](https://github.co
 
 Only ever used on testnet, use at your own risk.
 
+The primary purpose of this repository is to test things I'm hacking on in `bdk`.
+
 ## Usage
 
 ```
