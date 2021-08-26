@@ -41,21 +41,30 @@ type BtcWallet = Wallet<ElectrumBlockchain, AnyDatabase>;
 const DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/0'/0'/*)";
 const CHANGE_DESC: &str = "pkh(tprv8ZgxMBicQKsPeWaKVvhoETvieG37c9YEouU1wuD8zqkWhFowmbjJtS9PHRbzaKJtiixK1bEKFGUbWTru93spErRuxdaAwpH2aP5qMLQNdEN/1/*)";
 
-pub fn electrumx_wallet(db_path: PathBuf) -> Result<BtcWallet> {
-    info!("Creating wallet");
+pub fn sled_wallet(db_path: PathBuf) -> Result<BtcWallet> {
     debug!("Using database at: {}", db_path.display());
     let db = sled::open(db_path)?;
     let tree = db.open_tree(b"electrumx wallet")?;
+    let any = AnyDatabase::from(tree);
+    electrumx_wallet(any)
+}
+
+/// Construct a `Wallet` after doing:
+/// - Deserialize `db` and create a `MemoryDatabase`.
+/// - Create an `ElectrumBlockchain`.
+pub fn deserialized_wallet(db: String) -> Result<BtcWallet> {
+    let db = MemoryDatabase::from_str(db)?;
+    let any = AnyDatabase::from(db);
+    electrumx_wallet(any)
+}
+
+fn electrumx_wallet(db: AnyDatabase) -> Result<BtcWallet> {
+    info!("Creating wallet");
 
     let client = Client::new(ELECTRUMX_URL)?;
     let blockchain = ElectrumBlockchain::from(client);
-    let wallet = Wallet::new(
-        DESC,
-        Some(CHANGE_DESC),
-        Network::Testnet,
-        AnyDatabase::from(tree),
-        blockchain,
-    )?;
+
+    let wallet = Wallet::new(DESC, Some(CHANGE_DESC), Network::Testnet, db, blockchain)?;
 
     Ok(wallet)
 }

@@ -29,8 +29,12 @@ fn main() -> Result<()> {
 
     let db = database_path()?;
 
-    let wallet = crate::electrumx_wallet(db)?;
+    let wallet = crate::sled_wallet(db)?;
     wallet.sync(blockchain::log_progress(), None)?;
+
+    // Test the ser/der of memory database.
+    let s = wallet.serialize_database()?;
+    let wallet = crate::deserialized_wallet(s)?;
 
     match opt.cmd {
         Cmd::Balance => cmd::balance(&wallet)?,
