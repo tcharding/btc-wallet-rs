@@ -76,7 +76,17 @@ pub fn list_unspent(wallet: &BtcWallet) -> Result<()> {
 }
 
 /// Debug the wallet.
-pub fn debug(_wallet: &BtcWallet) -> Result<()> {
-    // TODO: Print all used addresses.
+pub fn debug(wallet: &BtcWallet) -> Result<()> {
+    let addr = wallet.get_address(AddressIndex::LastUnused)?;
+    println!("Last unused address: {}", addr);
+
+    let balance = wallet.get_balance()?;
+    println!("Current balance: {}", balance);
+
+    println!("Unspent UTXOs:");
+    for utxo in wallet.list_unspent()?.iter() {
+        println!("{:?}", utxo);
+    }
+
     Ok(())
 }

@@ -20,7 +20,7 @@ use log::{debug, error, info, trace, warn};
 
 use anyhow::Result;
 use bdk::blockchain::ElectrumBlockchain;
-use bdk::database::AnyDatabase;
+use bdk::database::{AnyDatabase, MemoryDatabase};
 use bdk::electrum_client::Client;
 use bdk::Wallet;
 use bitcoin::Network;
@@ -52,8 +52,8 @@ pub fn sled_wallet(db_path: PathBuf) -> Result<BtcWallet> {
 /// Construct a `Wallet` after doing:
 /// - Deserialize `db` and create a `MemoryDatabase`.
 /// - Create an `ElectrumBlockchain`.
-pub fn deserialized_wallet(db: String) -> Result<BtcWallet> {
-    let db = MemoryDatabase::from_str(db)?;
+pub fn deserialized_wallet(db: &str) -> Result<BtcWallet> {
+    let db = MemoryDatabase::deserialize(db)?;
     let any = AnyDatabase::from(db);
     electrumx_wallet(any)
 }

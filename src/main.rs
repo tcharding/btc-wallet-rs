@@ -9,7 +9,7 @@ use anyhow::Result;
 use bdk::blockchain;
 use structopt::StructOpt;
 
-use btc_wallet::{cmd, electrumx_wallet};
+use btc_wallet::{cmd, deserialized_wallet, sled_wallet};
 
 fn main() -> Result<()> {
     let opt = Opt::from_args();
@@ -31,10 +31,11 @@ fn main() -> Result<()> {
 
     let wallet = crate::sled_wallet(db)?;
     wallet.sync(blockchain::log_progress(), None)?;
+    cmd::debug(&wallet)?;
 
     // Test the ser/der of memory database.
     let s = wallet.serialize_database()?;
-    let wallet = crate::deserialized_wallet(s)?;
+    let wallet = crate::deserialized_wallet(&s)?;
 
     match opt.cmd {
         Cmd::Balance => cmd::balance(&wallet)?,
