@@ -9,7 +9,7 @@ use anyhow::Result;
 use bdk::blockchain;
 use structopt::StructOpt;
 
-use btc_wallet::{cmd, electrumx_wallet};
+use btc_wallet::{cmd, testnet};
 
 fn main() -> Result<()> {
     let opt = Opt::from_args();
@@ -29,7 +29,7 @@ fn main() -> Result<()> {
 
     let db = database_path()?;
 
-    let wallet = crate::electrumx_wallet(db)?;
+    let wallet = testnet::electrs_wallet(db)?;
     wallet.sync(blockchain::log_progress(), None)?;
 
     match opt.cmd {

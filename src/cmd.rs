@@ -1,31 +1,46 @@
 use std::str::FromStr;
 
 use anyhow::{bail, Result};
+use bdk::bitcoin::{Address, Txid};
+use bdk::blockchain::Blockchain;
+use bdk::database::BatchDatabase;
 use bdk::wallet::AddressIndex;
-use bdk::SignOptions;
-use bitcoin::Address;
+use bdk::{SignOptions, Wallet};
 
-use crate::{BtcWallet, SATS_IN_ONE_BITCOIN};
+// use crate::taproot;
+use crate::SATS_IN_ONE_BITCOIN;
 
 #[allow(unused_imports)]
 use log::{debug, error, info, trace, warn};
 
 /// Print the current balance.
-pub fn balance(wallet: &BtcWallet) -> Result<()> {
+pub fn balance<B, D>(wallet: &Wallet<B, D>) -> Result<()>
+where
+    B: Blockchain,
+    D: BatchDatabase,
+{
     let b = wallet.get_balance()?;
     println!("Balance: {}", crate::display_btc(b));
     Ok(())
 }
 
 /// Generate and print the last unused address.
-pub fn address(wallet: &BtcWallet) -> Result<()> {
+pub fn address<B, D>(wallet: &Wallet<B, D>) -> Result<()>
+where
+    B: Blockchain,
+    D: BatchDatabase,
+{
     let info = wallet.get_address(AddressIndex::LastUnused)?;
     println!("Address: {}", *info);
     Ok(())
 }
 
 /// Send `amount` to `address`.
-pub fn send(wallet: &BtcWallet, amount: u64, address: &str) -> Result<()> {
+pub fn send<B, D>(wallet: &Wallet<B, D>, amount: u64, address: &str) -> Result<()>
+where
+    B: Blockchain,
+    D: BatchDatabase,
+{
     let to = Address::from_str(address)?;
 
     let (mut psbt, details) = {
@@ -60,7 +75,11 @@ fn default_testnet_abs_fee() -> u64 {
 }
 
 /// List transactions to/from this wallet.
-pub fn list_transactions(wallet: &BtcWallet, include_raw: bool) -> Result<()> {
+pub fn list_transactions<B, D>(wallet: &Wallet<B, D>, include_raw: bool) -> Result<()>
+where
+    B: Blockchain,
+    D: BatchDatabase,
+{
     for details in wallet.list_transactions(include_raw)? {
         println!("{}", serde_json::to_string_pretty(&details).unwrap());
     }
@@ -68,7 +87,11 @@ pub fn list_transactions(wallet: &BtcWallet, include_raw: bool) -> Result<()> {
 }
 
 /// List unspent transactions.
-pub fn list_unspent(wallet: &BtcWallet) -> Result<()> {
+pub fn list_unspent<B, D>(wallet: &Wallet<B, D>) -> Result<()>
+where
+    B: Blockchain,
+    D: BatchDatabase,
+{
     for utxo in wallet.list_unspent()? {
         println!("{}", serde_json::to_string_pretty(&utxo).unwrap());
     }
@@ -76,7 +99,28 @@ pub fn list_unspent(wallet: &BtcWallet) -> Result<()> {
 }
 
 /// Debug the wallet.
-pub fn debug(_wallet: &BtcWallet) -> Result<()> {
-    // TODO: Print all used addresses.
+pub fn debug<B, D>(wallet: &Wallet<B, D>) -> Result<()>
+where
+    B: Blockchain,
+    D: BatchDatabase,
+{
+    let reset = wallet.get_address(AddressIndex::Reset(0))?;
+    let last_unused = wallet.get_address(AddressIndex::LastUnused)?;
+    let new = wallet.get_address(AddressIndex::New)?;
+
+    println!();
+    println!("used addr:   {}", reset);
+    println!("last unused: {}", last_unused);
+    println!("new addr:    {}", new);
+
+    let b = wallet.get_balance()?;
+    println!();
+    println!("Balance: {}", crate::display_btc(b));
+
+    let txid = Txid::from_str("e8a7d8bc97f114255d99aaf20a71a7e9d80ed627c6217be8d00528b2c8daaa09")?;
+    let tx = wallet.get_tx(&txid, true);
+    println!();
+    println!("{:?}", tx);
+
     Ok(())
 }
