@@ -29,7 +29,7 @@ fn main() -> Result<()> {
 
     let db = database_path()?;
 
-    let wallet = testnet::electrs_wallet(db)?;
+    let wallet = testnet::esplora_wallet(db)?;
     wallet.sync(blockchain::log_progress(), None)?;
 
     match opt.cmd {
